@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    protected $guarded = [];
+    protected $table = "questions";
+    protected $fillable = [
+        'user_id',
+        'question', 
+        'type'
+    ];
+    
 }

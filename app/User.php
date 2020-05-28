@@ -39,4 +39,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function OauthAccessToken(){
+        return $this->hasMany('\App\Models\OauthAccessToken');
+    }
+    public function question(){
+        return $this->hasMany('\App\Models\Question');
+    }
+    public function survey(){
+        return $this->hasMany('\App\Models\SurveyAPI');
+    }
 }

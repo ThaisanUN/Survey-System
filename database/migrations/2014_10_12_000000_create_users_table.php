@@ -20,15 +20,15 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('password', 60);
-            $table->unsignedInteger('role_id')->unsigned();
+            $table->integer('role_id')->unsigned();
             $table->rememberToken();
             $table->timestamps();
         });
 
-        Schema::table('users', function(Blueprint $table) {
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+        // Schema::table('users', function(Blueprint $table) {
+        //     $table->foreign('role_id')->references('id')->on('roles');
 
-          });
+        //   });
     }
 
     /**
@@ -38,9 +38,9 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table) {
-            $table->dropForeign(['role_id']);
-        });
+        // Schema::table('users', function(Blueprint $table) {
+        //     $table->dropForeign(['role_id']);
+        // });
         Schema::dropIfExists('users');
     }
 }

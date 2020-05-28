@@ -21,9 +21,9 @@ class CreateRolesTable extends Migration
             $table->string('description')->nullable();
             $table->timestamps();
         });
-        Schema::table('roles', function(Blueprint $table) {
-            $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
-        });
+        // Schema::table('roles', function(Blueprint $table) {
+        //     $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
+        // });
     }
 
     /**
@@ -33,10 +33,10 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::table('roles', function(Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropForeign(['permission_id']);
-        });
+        // Schema::table('roles', function(Blueprint $table) {
+        //     $table->dropForeign(['user_id']);
+        //     $table->dropForeign(['permission_id']);
+        // });
         Schema::dropIfExists('roles');
     }
 }

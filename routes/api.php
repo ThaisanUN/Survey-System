@@ -16,6 +16,19 @@ use App\Http\Controllers\Controller;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/create','Api\AuthController@register');
-Route::post('/login','Api\AuthController@login');
-Route::get('/logout', 'Api\AuthController@logout')->middleware('auth:api');
+Route::post('register','Api\AuthController@register');
+Route::post('login','Api\AuthController@login');
+Route::get('user', 'Api\AuthController@user');
+Route::get('logout', 'Api\AuthController@logout');
+
+Route::get('question/{id}', 'Api\QuestionController@getByUser');
+//Question 
+Route::middleware('auth:api')->group(function() {
+    // Survey
+    Route::get('survey', 'Api\SurveyApiController@index');
+    Route::post('survey', 'Api\SurveyApiController@store');
+    Route::put('survey/{id}', 'Api\SurveyApiController@update');
+
+    // Question
+    Route::post('question', 'Api\QuestionController@store');
+});
