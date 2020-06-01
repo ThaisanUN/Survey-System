@@ -10,7 +10,8 @@ class Question extends Model
     protected $fillable = [
         'user_id',
         'question', 
-        'type'
+        'type',
+        'survey_id'
     ];
     
 }

@@ -105,22 +105,11 @@ class SurveyApiController extends Controller
                 "title" => $request->title,
                 "description" => $request->description
             ]);
-            return response()->json($resource, 200);
+            return response()->json(["message" => "updated", "resource" => $resource], 200);
         }
         else {
-            return response()->json(["message" => "unauthorize user"]);
+            return response()->json(["message" => "unauthorize user"], 401);
         }
-        // $updateData = $request->validate([
-        //     'name' => 'required|max:255',
-        //     'email' => 'required|max:255',
-        //     'phone' => 'required|numeric',
-        //     'password' => 'required|max:255',
-        // ]);
-        // Student::whereId($id)->update($updateData);
-        // return redirect('/students')->with('completed', 'Student has been updated');
-
-        // $poll->update($request->all());
-        
     }
 
     /**
@@ -131,6 +120,14 @@ class SurveyApiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = Auth::user();
+        $resource = SurveyAPI::findOrFail($id);
+        if ($resource->user_id == $user->id){
+            $resource->delete();
+            return response()->json(["message" => "deleted", "resource" => $resource], 200);
+        }
+        else {
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 }

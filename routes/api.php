@@ -28,7 +28,10 @@ Route::middleware('auth:api')->group(function() {
     Route::get('survey', 'Api\SurveyApiController@index');
     Route::post('survey', 'Api\SurveyApiController@store');
     Route::put('survey/{id}', 'Api\SurveyApiController@update');
-
+    Route::delete('survey/{id}', 'Api\SurveyApiController@destroy');
     // Question
-    Route::post('question', 'Api\QuestionController@store');
+    Route::get('question', 'Api\QuestionController@index');
+    Route::post('question/{surveyID}', 'Api\QuestionController@store');
+    Route::put('question/{id}', 'Api\QuestionController@update');
+    Route::delete('question/{id}', 'Api\QuestionController@destroy');
 });

@@ -8,6 +8,7 @@ use App\Models\Question;
 use Validator;
 use Auth;
 use App\User;
+use App\Models\SurveyAPI;
 
 class QuestionController extends Controller
 {
@@ -21,7 +22,9 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $resource = User::findOrFail($user->id)->question;
+        return response()->json($resource, 200);
     }
 
     /**
@@ -40,23 +43,35 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $surveyID)
     {
         $rules = [
-            'question' => 'required',
-            'type' => 'required',
+            'question' => 'required|string',
+            'type' => 'in:check,free'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()){
             return response()->json($validator->errors(), 400);
         }
         $user = Auth::user();
-        $question = Question::create([
-            "user_id" => $user->id,
-            "question" => $request->question,
-            "type" => $request->type
-        ]);
-        return response()->json($question, 201);
+        $survey = SurveyAPI::find($surveyID);
+        if (!$survey){
+            return response()->json(["message" => "survey not found"], 404);
+        }
+        else {
+            if ($survey->user_id == $user->id){
+                $question = Question::create([
+                    "user_id" => $user->id,
+                    "question" => $request->question,
+                    "type" => $request->type,
+                    "survey_id" => $surveyID
+                ]);
+                return response()->json(["message" => "question stored", "resource" => $question], 201);
+            }
+            else{
+                return response()->json(["message" => "unauthorize user"], 401);
+            }
+        }   
     }
 
     /**
@@ -90,7 +105,31 @@ class QuestionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'question' => 'required|string',
+            'type' => 'required|in:check,free'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+        $user = Auth::user();
+        $question = Question::find($id);
+        if (!$question){
+            return response()->json(["message" => "survey not found"], 404);
+        }
+        else {
+            if ($question->user_id == $user->id){
+                $question->update([
+                    "question" => $request->question,
+                    "type" => $request->type
+                ]);
+                return response()->json(["message" => "question updated", "resource" => $question], 200);
+            }
+            else{
+                return response()->json(["message" => "unauthorize user"], 401);
+            }
+        }   
     }
 
     /**
@@ -101,6 +140,14 @@ class QuestionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = Auth::user();
+        $resource = Question::findOrFail($id);
+        if ($resource->user_id == $user->id){
+            $resource->delete();
+            return response()->json(["message" => "deleted", "resource" => $resource], 200);
+        }
+        else {
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 }
