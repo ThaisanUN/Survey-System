@@ -49,4 +49,7 @@ class User extends Authenticatable
     public function survey(){
         return $this->hasMany('\App\Models\SurveyAPI');
     }
+    public function answer(){
+        return $this->hasMany('\App\Models\Answer');
+    }
 }

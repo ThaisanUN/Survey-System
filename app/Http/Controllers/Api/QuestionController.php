@@ -12,9 +12,9 @@ use App\Models\SurveyAPI;
 
 class QuestionController extends Controller
 {
-    public function getByUser($id){
-        return response()->json(User::find($id)->question);
-    }
+    // public function getByUser($id){
+    //     return response()->json(User::find($id)->question);
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -25,6 +25,29 @@ class QuestionController extends Controller
         $user = Auth::user();
         $resource = User::findOrFail($user->id)->question;
         return response()->json($resource, 200);
+    }
+
+    // Display question with answer by question id
+    public function getQueFtAns($question_id){
+        $user = Auth::user();
+        $question = Question::find($question_id);
+        if (!$question){
+            return response()->json(["message" => "question not found"], 404);
+        }
+        if ($question->user_id == $user->id){
+            $answer = Question::find($question_id)->answer;
+            if (!$answer){
+                return response()->json(["message" => "found question only", "question" => $question], 200);
+            }
+            else {
+                return response()->json(["message" => "found question with answer", 
+                    "question" => $question, 
+                    "answer" => $answer], 200);
+            }
+        }
+        else{
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 
     /**

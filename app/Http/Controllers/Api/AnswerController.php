@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Answer;
+use App\Models\Question;
+use Validator;
+use Auth;
+use App\User;
 
 class AnswerController extends Controller
 {
@@ -14,7 +19,9 @@ class AnswerController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $resource = User::findOrFail($user->id)->answer;
+        return response()->json($resource, 200);
     }
 
     /**
@@ -33,9 +40,32 @@ class AnswerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $questionID)
     {
-        //
+        $rules = [
+            'answer' => 'required|string'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+        $user = Auth::user();
+        $question = Question::find($questionID);
+        if (!$question){
+            return response()->json(["message" => "question not found"], 404);
+        }
+        if($question->user_id == $user->id){
+            $survey = Answer::create([
+                "user_id" => $user->id,
+                "survey_id" => $question->survey_id,
+                "question_id" => $questionID,
+                "answer" => $request->answer
+            ]);
+            return response()->json(["message" => "answer created", "resource" => $survey], 201);
+        }
+        else {
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 
     /**
@@ -69,7 +99,27 @@ class AnswerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'answer' => 'required|string'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+        $user = Auth::user();
+        $resource = Answer::find($id);
+        if (!$resource){
+            return response()->json(["message" => "answer not found"], 404);
+        }
+        if ($resource->user_id == $user->id){
+            $resource->update([
+                "answer" => $request->answer
+            ]);
+            return response()->json(["message" => "updated", "resource" => $resource], 200);
+        }
+        else {
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 
     /**
@@ -80,6 +130,14 @@ class AnswerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = Auth::user();
+        $resource = Answer::findOrFail($id);
+        if ($resource->user_id == $user->id){
+            $resource->delete();
+            return response()->json(["message" => "deleted", "resource" => $resource], 200);
+        }
+        else {
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
     }
 }

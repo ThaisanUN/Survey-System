@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SurveyAPI;
+use App\Models\Question;
 use Validator;
 use Auth;
 use App\User;
@@ -16,13 +17,38 @@ class SurveyApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // Display survey by user
     public function index()
     {
         $user = Auth::user();
-        // $resource = SurveyAPI::findOrFail($user->id);
         $resource = User::findOrFail($user->id)->survey;
         return response()->json($resource, 200);
     }
+
+    // Display survey with question by survey id
+    public function getSurFtQue($survey_id){
+        $user = Auth::user();
+        $survey = SurveyAPI::find($survey_id);
+        if (!$survey){
+            return response()->json(["message" => "survey not found"], 404);
+        }
+        if ($survey->user_id == $user->id){
+            $question = SurveyAPI::find($survey_id)->question;
+            if (!$question){
+                return response()->json(["message" => "found survey only", "survey" => $survey], 200);
+            }
+            else {
+                return response()->json(["message" => "found survey with question", 
+                    "survey" => $survey, 
+                    "question" => $question], 200);
+            }
+        }
+        else{
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
+    }
+
+    // Display survey with ans
 
     /**
      * Show the form for creating a new resource.

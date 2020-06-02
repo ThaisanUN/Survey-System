@@ -21,9 +21,15 @@ Route::post('login','Api\AuthController@login');
 Route::get('user', 'Api\AuthController@user');
 Route::get('logout', 'Api\AuthController@logout');
 
-Route::get('question/{id}', 'Api\QuestionController@getByUser');
-//Question 
+// Route::get('question/{id}', 'Api\QuestionController@getByUser');
+
 Route::middleware('auth:api')->group(function() {
+    // Survey with other
+    Route::get('survey/question/{survey_id}', 'Api\SurveyApiController@getSurFtQue');
+
+    // Question with other
+    Route::get('question/answer/{question_id}', 'Api\QuestionController@getQueFtAns');
+
     // Survey
     Route::get('survey', 'Api\SurveyApiController@index');
     Route::post('survey', 'Api\SurveyApiController@store');
@@ -34,4 +40,9 @@ Route::middleware('auth:api')->group(function() {
     Route::post('question/{surveyID}', 'Api\QuestionController@store');
     Route::put('question/{id}', 'Api\QuestionController@update');
     Route::delete('question/{id}', 'Api\QuestionController@destroy');
+    // Answer 
+    Route::get('answer', 'Api\AnswerController@index');
+    Route::post('answer/{questionID}', 'Api\AnswerController@store');
+    Route::put('answer/{id}', 'Api\AnswerController@update');
+    Route::delete('answer/{id}', 'Api\AnswerController@destroy');
 });
