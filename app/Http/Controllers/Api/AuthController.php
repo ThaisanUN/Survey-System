@@ -11,6 +11,12 @@ use Auth;
 
 class AuthController extends Controller
 {
+  protected $loginPath = '/unauthorize';
+
+  public function unauthorize(){
+  
+    return response()->json(["message" => "Invalid credentials"], 401);
+  }
 
   public function register(Request $request){
     $rules = [

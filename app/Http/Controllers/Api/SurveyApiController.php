@@ -28,6 +28,9 @@ class SurveyApiController extends Controller
     // Display survey with question by survey id
     public function getSurFtQue($survey_id){
         $user = Auth::user();
+        if(!$user){
+            return response()->json(["message" => "unauthorize user"], 401);
+        }
         $survey = SurveyAPI::find($survey_id);
         if (!$survey){
             return response()->json(["message" => "survey not found"], 404);
@@ -43,9 +46,6 @@ class SurveyApiController extends Controller
                     "question" => $question], 200);
             }
         }
-        else{
-            return response()->json(["message" => "unauthorize user"], 401);
-        }
     }
 
     // Display survey with ans
@@ -58,6 +58,18 @@ class SurveyApiController extends Controller
     public function create()
     {
         //
+    }
+
+    function generate_string($strength = 6) {
+        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $input_length = strlen($permitted_chars);
+        $random_string = '';
+        for($i = 0; $i < $strength; $i++) {
+            $random_character = $permitted_chars[mt_rand(0, $input_length - 1)];
+            $random_string .= $random_character;
+        }
+     
+        return $random_string;
     }
 
     /**
@@ -77,13 +89,17 @@ class SurveyApiController extends Controller
             return response()->json($validator->errors(), 400);
         }
         $user = Auth::user();
+        $survey_code = $this->generate_string();
+        // return response()->json($survey_code);
         $survey = SurveyAPI::create([
             "user_id" => $user->id,
             "title" => $request->title,
-            "description" => $request->description
+            "description" => $request->description,
+            "survey_code" => $survey_code
         ]);
         return response()->json($survey, 201);
     }
+
 
     /**
      * Display the specified resource.
@@ -154,6 +170,27 @@ class SurveyApiController extends Controller
         }
         else {
             return response()->json(["message" => "unauthorize user"], 401);
+        }
+    }
+
+    // Get survey with question by code 
+    public function getSurFtQueByCode($q=''){
+        dd($survey_code);
+        $survey = SurveyAPI::where('survey_code', '=', $survey_code);
+        dd($survey);
+        if (!$survey){
+            return response()->json(["message" => "survey not found"], 404);
+        }
+        if ($survey){
+            $question = SurveyAPI::find($survey->id)->question;
+            if (!$question){
+                return response()->json(["message" => "found survey only", "survey" => $survey], 200);
+            }
+            else {
+                return response()->json(["message" => "found survey with question", 
+                    "survey" => $survey, 
+                    "question" => $question], 200);
+            }
         }
     }
 }

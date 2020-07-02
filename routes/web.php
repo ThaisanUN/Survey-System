@@ -19,6 +19,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('login', function(){
+	return response()->json('message');
+});
 Auth::routes();
 
 Route::get('surveys/update/{id}', function () {

@@ -30,8 +30,9 @@ class AuthApi extends Middleware
 
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
-        }
+        // if (! $request->expectsJson()) {
+        //     return route('unauthorize');
+        // }
+        return route('unauthorize');
     }
 }

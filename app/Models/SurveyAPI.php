@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SurveyAPI extends Model
 {
     protected $table = "survey_api";
-    protected $fillable = ['title', 'description', 'user_id'];
+    protected $fillable = ['title', 'description', 'user_id', 'survey_code'];
 
     public function question()
     {
