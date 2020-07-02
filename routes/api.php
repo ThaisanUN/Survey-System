@@ -20,8 +20,11 @@ Route::post('register','Api\AuthController@register');
 Route::post('login','Api\AuthController@login');
 Route::get('user', 'Api\AuthController@user');
 Route::get('logout', 'Api\AuthController@logout');
-
+Route::get('unauthorize', 'Api\AuthController@unauthorize')->name('unauthorize');
 // Route::get('question/{id}', 'Api\QuestionController@getByUser');
+
+// Doing surveys route
+Route::get('survey/code/{q?}', 'Api\SurveyApiController@getSurFtQueByCode');
 
 Route::middleware('auth:api')->group(function() {
     // Survey with other
