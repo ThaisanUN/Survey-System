@@ -12,7 +12,7 @@
         "bgaze/bootstrap-form": "^1.0",
         "fideloper/proxy": "^4.0",
         "jazmy/jaz-form-builder": "dev-master",
-        "laravel/framework": "6.0.*",
+        "laravel/framework": "6.18.*",
         "laravel/helpers": "^1.2",
         "laravel/passport": "^8.4",
         "laravel/tinker": "^1.0",
